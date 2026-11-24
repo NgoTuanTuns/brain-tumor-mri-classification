@@ -1,0 +1,77 @@
+# Shared settings across all experiments
+common:
+  dataset: "masoudnickparvar/brain-tumor-mri-dataset"
+  seed: 42
+  img_size: 128
+  batch_size: 32
+  val_split: 0.2
+  num_classes: 4
+  num_workers: 2
+  normalize:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+
+# Training-only data augmentation (never applied to validation or test splits)
+augmentation:
+  horizontal_flip_p: 0.5
+  rotation_degrees: 15
+  color_jitter:
+    brightness: 0.15
+    contrast: 0.15
+
+# Ablation study configurations
+experiments:
+  baseline:
+    model: "baseline_cnn"
+    use_augmentation: false
+    lr: 0.001
+    weight_decay: 0.0
+    num_epochs: 25
+    early_stopping:
+      enabled: false
+
+  dropout_l2:
+    model: "regularized_cnn"
+    dropout2d: 0.25
+    dropout_fc: 0.5
+    use_augmentation: false
+    lr: 0.001
+    weight_decay: 0.0001
+    num_epochs: 25
+    early_stopping:
+      enabled: false
+
+  augmentation:
+    model: "baseline_cnn"
+    use_augmentation: true
+    lr: 0.001
+    weight_decay: 0.0
+    num_epochs: 25
+    early_stopping:
+      enabled: false
+
+  combined_es:
+    model: "regularized_cnn"
+    dropout2d: 0.25
+    dropout_fc: 0.5
+    use_augmentation: true
+    lr: 0.001
+    weight_decay: 0.0001
+    num_epochs: 35
+    early_stopping:
+      enabled: true
+      patience: 6
+      min_delta: 0.0001
+
+  resnet18_finetune:
+    model: "resnet18"
+    pretrained: true
+    dropout_fc: 0.3
+    use_augmentation: true
+    lr: 0.0001
+    weight_decay: 0.0001
+    num_epochs: 20
+    early_stopping:
+      enabled: true
+      patience: 5
+      min_delta: 0.0001
